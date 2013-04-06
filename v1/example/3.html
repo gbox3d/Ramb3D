@@ -63,6 +63,10 @@
             //이벤트처리
             document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
+            document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+            document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+
             window.addEventListener( 'resize', onWindowResize, false );
 
             function onWindowResize() {
@@ -114,6 +118,37 @@
 
                 document.removeEventListener( 'mousemove', onDocumentMouseMove );
                 document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+            }
+
+            var touchX,  touchY;
+
+            function onDocumentTouchStart( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+            }
+
+            function onDocumentTouchMove( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                //lon -= ( touch.screenX - touchX ) * 0.1;
+                //lat += ( touch.screenY - touchY ) * 0.1;
+
+                camera.rotation.x += (touchY - touch.screenY) * 0.01;
+                camera.rotation.y += (touchX - touch.screenX) * 0.01;
+                camera.update(window.innerWidth, window.innerHeight);
+
+                touchX = touch.screenX;
+                touchY = touch.screenY;
 
             }
 
