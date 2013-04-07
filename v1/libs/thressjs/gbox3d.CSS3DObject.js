@@ -31,7 +31,7 @@ THREE.CSS3DObject.prototype.clone = function() {
     //슈퍼콜링
     THREE.Object3D.prototype.clone.call(this,clone_obj);
 
-    console.log('my css3d obj clone');
+    //console.log('my css3d obj clone');
     return clone_obj;
 }
 
@@ -41,6 +41,23 @@ THREE.CSS3DObject.prototype.updateMatrix = function() {
     //슈퍼콜링
     THREE.Object3D.prototype.updateMatrix.call(this);
 
+    this.updateCSS();
+
+    /*
+    //css3 스타일 스트링 업데이트
+    var element = this.element;
+
+    var style = this.matrix.toCSSMatrix();
+
+    element.style.WebkitTransform = style;
+    element.style.MozTransform = style;
+    element.style.oTransform = style;
+    element.style.transform = style;
+    */
+
+}
+
+THREE.CSS3DObject.prototype.updateCSS = function() {
     //css3 스타일 스트링 업데이트
     var element = this.element;
 
@@ -52,6 +69,8 @@ THREE.CSS3DObject.prototype.updateMatrix = function() {
     element.style.transform = style;
 
 }
+
+
 
 //gbox3d fatch end
 //////////////////

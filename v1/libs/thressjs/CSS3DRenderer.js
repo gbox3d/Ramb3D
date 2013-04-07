@@ -204,7 +204,7 @@ THREE.CSS3DRenderer = function (domElement,cameraElement) {
 		this.cameraElement.style.oTransform = style;
 		this.cameraElement.style.transform = style;
 
-        console.log(style);
+        //console.log(style);
 
 		for ( var i = 0, il = objects.length; i < il; i ++ ) {
 
