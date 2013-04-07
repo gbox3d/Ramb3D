@@ -67,6 +67,7 @@
 
             }
 
+
             function onDocumentMouseMove( event ) {
 
                 var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
@@ -74,15 +75,14 @@
 
                 //camera.rotation.y += movementX * 0.01;
 
-                var rotM = new THREE.Matrix4();
+                var rotM = (new THREE.Matrix4()).setRotationFromEuler(new THREE.Vector3(movementY*0.01,movementX*0.01,0));
 
-                rotM.setRotationFromEuler(new THREE.Vector3(movementY*0.01,movementX*0.01,0));
-                camera.position.applyMatrix4(rotM);
+                //인자로 넘겨준 매트릭스를 자기 메트릭스 곱해서 적용한다.
+                object.applyMatrix(rotM);
+
+                object.updateCSS();
 
 
-                //위치가 바뀌면 재설정..그렇지 않으면 따라 움직임
-                camera.lookAt( new THREE.Vector3(0,0,0) );
-                camera.update(window.innerWidth, window.innerHeight);
 
             }
 
