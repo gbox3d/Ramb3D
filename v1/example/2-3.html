@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>fps 카메라 형식 오브잭트 회전 </title>
+    <title>fps 카메라 형식 오브잭트 회전(애니메이션 루프 적용 버전) </title>
 
     <style>
         .css3dobj {
@@ -40,7 +40,16 @@
             object.position.set(0,0,0);
             scene.add( object );
 
-            renderer.render( scene, camera );
+
+            //게임루프
+            (function gameloop() {
+                //재호출을 위한 부분...
+                requestAnimationFrame(gameloop);
+                renderer.render( scene, camera );
+
+            })();
+
+
 
             //이벤트처리
             document.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -79,7 +88,7 @@
 
                 object.rotation.x += movementY * 0.01;
                 object.rotation.y += movementX * 0.01;
-                object.updateMatrix();
+
 
             }
 
@@ -88,18 +97,9 @@
                 console.log(event.wheelDeltaY);
                 event.preventDefault();
 
+                //전방으로 이동
                 object.translateZ(event.wheelDeltaY);
-                object.updateMatrix();
 
-//                var camMat = [];
-//                camera.matrix.flattenToArray(camMat);
-//
-//                //전방벡터 구하기
-//                var vFront =  new THREE.Vector3(camMat[8],camMat[9],camMat[10]);
-//                vFront.normalize();
-//                vFront.multiplyScalar(event.wheelDeltaY );
-//                camera.position = camera.position.add(vFront);
-//                camera.update(window.innerWidth, window.innerHeight);
             }
 
 

@@ -11,17 +11,47 @@
         }
     </style>
 
+
+    <script src='../libs/jquery-1.9.1.min.js'></script>
+
     <script src='../libs/thressjs/three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
     <script src='../libs/thressjs/CSS3DRenderer.js'></script>
 
+
+
     <script>
+
+
+        function RogLog(logtext) {
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'text',
+                url: 'http://192.168.0.7:8080/log',
+                data: {text: logtext},
+                success: function(data, textStatus, jqXHR) {
+
+
+                },
+                complete: function(jqXHR, textStatus) {
+
+
+                },
+                error: function(qXHR, textStatus, errorThrown) {
+
+                }
+            });
+
+
+        }
 
         window.onload = function() {
 
             var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
@@ -40,60 +70,42 @@
             object.position.set(0,0,0);
             scene.add( object );
 
-            var i,j;
-
-            for(j=-5;j<5;j++) {
-
-                for(i=-5;i<5;i++) {
-
-                    object = object.clone();
-                    object.position.set(i*128,-128,j*128);
-                    scene.add( object );
-
-                }
-
-            }
+//            var i,j;
+//
+//            for(j=-5;j<5;j++) {
+//
+//                for(i=-5;i<5;i++) {
+//
+//                    object = object.clone();
+//                    object.position.set(i*128,-128,j*128);
+//                    scene.add( object );
+//
+//                }
+//
+//            }
 
             //초기 랜더링
             renderer.render( scene, camera );
 
-            //
+
+
             function fpsCamera(movementX,movementY,movementZ) {
-                //camera.rotation.x += movementY;
-                //camera.rotation.y += movementX;
 
-                camera.matrix.rotateX(movementY);
+                camera.eulerOrder = 'YXZ'
 
+                camera.rotation.x += movementY * 0.1;
+                camera.rotation.y += movementX * 0.1;
 
+                camera.update(window.innerWidth,window.innerHeight);
+                //renderer.domElement.backgroundColor="#00FF00";
 
-                //console.log(camera.up);
-                camera.matrix.rotateByAxis(camera.up,movementX);
+            }
 
+            function moveFront(delta) {
+                event.preventDefault();
+                camera.translateZ(delta);
 
-                camera.matrixWorld.copy( camera.matrix );
-
-                camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-
-                //css3 스트링 업데이트
-
-                var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.fov * 0.5 ) ) * window.innerHeight;
-
-                //css3 스타일 스트링 업데이트
-                var style = "translate3d(0,0," + fov + "px)" +
-                        camera.matrixWorldInverse.toCameraCSSMatrix() +
-                        " translate3d(" + window.innerWidth/2 + "px," + window.innerHeight/2 + "px, 0)";
-
-                camera.element.style.WebkitTransform = style;
-                camera.element.style.MozTransform = style;
-                camera.element.style.oTransform = style;
-                camera.element.style.transform = style;
-
-                //console.log(style);
-
-
-
-                //camera.update(window.innerWidth, window.innerHeight);
-
+                camera.update(window.innerWidth,window.innerHeight);
             }
 
             //이벤트처리
@@ -145,19 +157,16 @@
 
             function onDocumentMouseWheel( event ) {
 
-                var camMat = [];
-                camera.matrix.flattenToArray(camMat);
 
-                //전방벡터 구하기
-                var vFront =  new THREE.Vector3(camMat[8],camMat[9],camMat[10]);
-                vFront.normalize();
-                vFront.multiplyScalar(event.wheelDeltaY );
-                camera.position = camera.position.add(vFront);
-                camera.update(window.innerWidth, window.innerHeight);
+                event.preventDefault();
+
+                moveFront(event.wheelDeltaY)
+
             }
 
             //터치 디바이스
             var touchX,  touchY;
+            var touchZ;
 
             function onDocumentTouchStart( event ) {
 
@@ -167,6 +176,12 @@
 
                 touchX = touch.screenX;
                 touchY = touch.screenY;
+
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+                    touchZ = touch2.screenY;
+                    //RogLog('touch2 start ' + touchZ);
+                }
 
             }
 
@@ -182,6 +197,18 @@
                 touchY = touch.screenY;
 
                 fpsCamera(movementX*0.01,movementY*0.01,0);
+
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+
+                    var movementZ =  (touchZ - touch2.screenY);
+                    touchZ = touch2.screenY;
+
+                    //RogLog('touch2 move ' + movementZ);
+
+                    moveFront(movementZ);
+
+                }
 
 
 

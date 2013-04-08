@@ -24,8 +24,10 @@ THREE.CSS3DPerspectiveCamera.prototype.update = function(width,height) {
     //슈퍼콜링
     //THREE.PerspectiveCamera.prototype.updateMatrixWorld.call(this);
 
+    //로컬변환 메트릭스 갱신
     this.updateMatrix();
 
+    //월드변환 메트릭스 갱신
     if ( this.parent === undefined ) {
 
         this.matrixWorld.copy( this.matrix );
@@ -52,9 +54,7 @@ THREE.CSS3DPerspectiveCamera.prototype.update = function(width,height) {
     this.element.style.oTransform = style;
     this.element.style.transform = style;
 
-    console.log(style);
-
-
+    //console.log(style);
 }
 
 

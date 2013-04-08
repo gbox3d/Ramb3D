@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title> 기본축 고정 회전(트랙볼형식)</title>
 
     <style>
         .css3dobj {
@@ -73,6 +73,7 @@
                 var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
 
+                //항상 (1,0,0)(0,1,0) 기준으로 만 회전한다.
                 var rotM = (new THREE.Matrix4()).setRotationFromEuler(new THREE.Vector3(movementY*0.01,movementX*0.01,0));
 
                 //인자로 넘겨준 매트릭스를 자기 메트릭스 곱해서 적용한다.

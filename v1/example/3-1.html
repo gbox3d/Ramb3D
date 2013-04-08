@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>fps 카메라 형식 오브잭트 회전 </title>
+    <title></title>
 
     <style>
         .css3dobj {
@@ -14,8 +14,8 @@
     <script src='../libs/thressjs/three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
-    <script src='../libs/thressjs/CSS3DRenderer.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/CSS3DRenderer.js'></script>
 
     <script>
 
@@ -30,7 +30,7 @@
                     90,window.innerWidth / window.innerHeight, 1, 1000,
                     renderer.cameraElement
             );
-            camera.position.set(0,0,500);
+            camera.position.set(0,100,500);
             camera.lookAt( new THREE.Vector3(0,0,0) );
 
             var scene = new THREE.Scene();
@@ -40,11 +40,49 @@
             object.position.set(0,0,0);
             scene.add( object );
 
+            var i,j;
+
+            for(j=-5;j<5;j++) {
+
+                for(i=-5;i<5;i++) {
+
+                    object = object.clone();
+                    object.position.set(i*128,-128,j*128);
+                    scene.add( object );
+
+                }
+
+            }
+
+            //초기 랜더링
             renderer.render( scene, camera );
+
+
+            function fpsCamera(movementX,movementY,movementZ) {
+
+                camera.eulerOrder = 'YXZ'
+
+                camera.rotation.x += movementY * 0.1;
+                camera.rotation.y += movementX * 0.1;
+
+                camera.update(window.innerWidth,window.innerHeight);
+
+            }
+
+            function moveFront(delta) {
+                event.preventDefault();
+                camera.translateZ(delta);
+
+                camera.update(window.innerWidth,window.innerHeight);
+            }
 
             //이벤트처리
             document.addEventListener( 'mousedown', onDocumentMouseDown, false );
             document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+
+            document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+            document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
 
             window.addEventListener( 'resize', onWindowResize, false );
 
@@ -68,28 +106,29 @@
 
             }
 
-
             function onDocumentMouseMove( event ) {
 
                 var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
                 var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-                //fps 카메라식으로 회전시키기 위하여...
-                object.eulerOrder = 'YXZ'
+                fpsCamera(movementX*0.01,movementY*0.01,0);
 
-                object.rotation.x += movementY * 0.01;
-                object.rotation.y += movementX * 0.01;
-                object.updateMatrix();
+
+            }
+
+            function onDocumentMouseUp( event ) {
+
+                document.removeEventListener( 'mousemove', onDocumentMouseMove );
+                document.removeEventListener( 'mouseup', onDocumentMouseUp );
 
             }
 
             function onDocumentMouseWheel( event ) {
 
-                console.log(event.wheelDeltaY);
+
                 event.preventDefault();
 
-                object.translateZ(event.wheelDeltaY);
-                object.updateMatrix();
+                moveFront(event.wheelDeltaY)
 
 //                var camMat = [];
 //                camera.matrix.flattenToArray(camMat);
@@ -102,11 +141,34 @@
 //                camera.update(window.innerWidth, window.innerHeight);
             }
 
+            //터치 디바이스
+            var touchX,  touchY;
 
-            function onDocumentMouseUp( event ) {
+            function onDocumentTouchStart( event ) {
 
-                document.removeEventListener( 'mousemove', onDocumentMouseMove );
-                document.removeEventListener( 'mouseup', onDocumentMouseUp );
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+            }
+
+            function onDocumentTouchMove( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                var movementX =  (touchX - touch.screenX);
+                var movementY =  (touchY - touch.screenY);
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+                fpsCamera(movementX*0.01,movementY*0.01,0);
+
+
 
             }
 
