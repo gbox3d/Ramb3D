@@ -37,7 +37,6 @@
 
             var scene = new THREE.CSS3DScene({
                 camera:camera
-
             });
 
             var object = new THREE.CSS3DObject( document.querySelector('#cube') );
@@ -45,10 +44,16 @@
             object.updateMatrix();
             scene.add(object);
 
+            //cloning object
+            var clone_object = object.clone();
+            clone_object.position.set(128,0,0);
+            clone_object.updateMatrix();
+            scene.add(clone_object);
+
+
             var grid_object = new THREE.CSS3DObject( document.querySelector('#grid') );
             grid_object.position.set(0,0,0);
             grid_object.updateMatrix();
-
             scene.add(grid_object);
 
             renderer.render( scene, camera );

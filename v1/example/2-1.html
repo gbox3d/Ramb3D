@@ -16,6 +16,7 @@
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
     <script src='../libs/thressjs/CSS3DRenderer.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
 
     <script>
 
@@ -33,7 +34,9 @@
             camera.position.set(0,0,500);
             camera.lookAt( new THREE.Vector3(0,0,0) );
 
-            var scene = new THREE.Scene();
+            var scene = new THREE.CSS3DScene({
+                camera:camera
+            });
 
             var element = document.querySelector('#cube');
             var object = new THREE.CSS3DObject( element );

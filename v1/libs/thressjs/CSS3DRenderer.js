@@ -21,7 +21,7 @@ THREE.CSS3DSprite.prototype = Object.create( THREE.CSS3DObject.prototype );
 
 //
 
-THREE.CSS3DRenderer = function (domElement,cameraElement) {
+THREE.CSS3DRenderer = function (domElement,cameraElement,bkgColor) {
 
 	console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
 
@@ -38,7 +38,12 @@ THREE.CSS3DRenderer = function (domElement,cameraElement) {
         this.domElement = domElement;
     }
 
-	this.domElement.style.overflow = 'hidden';
+    if(bkgColor != undefined) {
+        this.domElement.style.backgroundColor = bkgColor;
+    }
+
+
+    this.domElement.style.overflow = 'hidden';
 
 	this.domElement.style.WebkitTransformStyle = 'preserve-3d';
 	this.domElement.style.WebkitPerspectiveOrigin = '50% 50%';
@@ -62,6 +67,8 @@ THREE.CSS3DRenderer = function (domElement,cameraElement) {
     }
 
 
+
+    this.cameraElement.setAttribute('id','gbox3d-css3d-camera-rev1')
 
 	this.cameraElement.style.WebkitTransformStyle = 'preserve-3d';
 	this.cameraElement.style.MozTransformStyle = 'preserve-3d';
@@ -204,59 +211,59 @@ THREE.CSS3DRenderer = function (domElement,cameraElement) {
 		this.cameraElement.style.oTransform = style;
 		this.cameraElement.style.transform = style;
 
-        //console.log(style);
 
-		for ( var i = 0, il = objects.length; i < il; i ++ ) {
 
-			var object = objects[ i ].object;
-
-			if ( object instanceof THREE.CSS3DObject ) {
-
-				var element = object.element;
-
-				if ( object instanceof THREE.CSS3DSprite ) {
-
-					// http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
-
-					_tmpMatrix.copy( camera.matrixWorldInverse );
-					_tmpMatrix.transpose();
-					_tmpMatrix.extractPosition( object.matrixWorld );
-					_tmpMatrix.scale( object.scale );
-
-					_tmpMatrix.elements[ 3 ] = 0;
-					_tmpMatrix.elements[ 7 ] = 0;
-					_tmpMatrix.elements[ 11 ] = 0;
-					_tmpMatrix.elements[ 15 ] = 1;
-
-					style = getObjectCSSMatrix( _tmpMatrix );
-
-				} else {
-
-					style = getObjectCSSMatrix( object.matrixWorld );
-
-				}
-
-				/*
-				element.style.WebkitBackfaceVisibility = 'hidden';
-				element.style.MozBackfaceVisibility = 'hidden';
-				element.style.oBackfaceVisibility = 'hidden';
-				element.style.backfaceVisibility = 'hidden';
-				*/
-
-				element.style.WebkitTransform = style;
-				element.style.MozTransform = style;
-				element.style.oTransform = style;
-				element.style.transform = style;
-
-				if ( element.parentNode !== this.cameraElement ) {
-
-					this.cameraElement.appendChild( element );
-
-				}
-
-			}
-
-		}
+//		for ( var i = 0, il = objects.length; i < il; i ++ ) {
+//
+//			var object = objects[ i ].object;
+//
+//			if ( object instanceof THREE.CSS3DObject ) {
+//
+//				var element = object.element;
+//
+//				if ( object instanceof THREE.CSS3DSprite ) {
+//
+//					// http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+//
+//					_tmpMatrix.copy( camera.matrixWorldInverse );
+//					_tmpMatrix.transpose();
+//					_tmpMatrix.extractPosition( object.matrixWorld );
+//					_tmpMatrix.scale( object.scale );
+//
+//					_tmpMatrix.elements[ 3 ] = 0;
+//					_tmpMatrix.elements[ 7 ] = 0;
+//					_tmpMatrix.elements[ 11 ] = 0;
+//					_tmpMatrix.elements[ 15 ] = 1;
+//
+//					style = getObjectCSSMatrix( _tmpMatrix );
+//
+//				} else {
+//
+//					style = getObjectCSSMatrix( object.matrixWorld );
+//
+//				}
+//
+//				/*
+//				element.style.WebkitBackfaceVisibility = 'hidden';
+//				element.style.MozBackfaceVisibility = 'hidden';
+//				element.style.oBackfaceVisibility = 'hidden';
+//				element.style.backfaceVisibility = 'hidden';
+//				*/
+//
+//				element.style.WebkitTransform = style;
+//				element.style.MozTransform = style;
+//				element.style.oTransform = style;
+//				element.style.transform = style;
+//
+//				if ( element.parentNode !== this.cameraElement ) {
+//
+//					this.cameraElement.appendChild( element );
+//
+//				}
+//
+//			}
+//
+//		}
 
 	};
 

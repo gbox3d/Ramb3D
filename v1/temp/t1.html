@@ -22,7 +22,22 @@
 
     <script>
 
+
+        function makeline(obj,start,end) {
+
+            var linelength = (new THREE.Vector3()).subVectors(start,end).length();
+
+            $(obj).css('height',linelength + 'px');
+
+            console.log(obj);
+
+            $("svg line",obj).attr('y2',linelength + 'px');
+
+        }
+
+
         $(function() {
+
 
             var renderer = new THREE.CSS3DRenderer();
             renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
@@ -37,21 +52,35 @@
 
             var scene = new THREE.CSS3DScene({
                 camera:camera
-
             });
 
-            var object = new THREE.CSS3DObject( document.querySelector('#cube') );
+
+
+
+            var element = document.querySelector('#grid');
+            var object = new THREE.CSS3DObject( element );
             object.position.set(0,0,0);
-            object.updateMatrix();
-            scene.add(object);
+            scene.add( object );
 
-            var grid_object = new THREE.CSS3DObject( document.querySelector('#grid') );
-            grid_object.position.set(0,0,0);
-            grid_object.updateMatrix();
+            //object.updateMatrix();
 
-            scene.add(grid_object);
 
+            var line_element = document.querySelector('#line');
+            var line_object = new THREE.CSS3DObject( line_element );
+
+            line_object.position.set(0,0,0);
+            object.add( line_object );
+
+
+            //$('#line').appendTo( $('#grid'));
+            makeline(line_object.element,new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,300));
+
+
+
+
+            scene.updateAllObject();
             renderer.render( scene, camera );
+            //scene.rootObject.updateMatrix();
 
             //이벤트처리
             document.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -94,7 +123,9 @@
 
             }
 
+
         });
+
 
 
     </script>
@@ -102,21 +133,6 @@
 </head>
 <body style="margin: 0px;">
 
-
-<div id='cube'>
-    <div
-            class="css3dobj"
-            style="
-                background-image: url(../res/crate.jpg);
-                background-size: 100%;
-                width: 128px;
-                height: 128px;
-                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,0px);
-            ">
-
-    </div>
-
-</div>
 
 
 <div id='grid'
@@ -173,6 +189,17 @@
 
 
 </div>
+
+<div id='line' style="width: 10px; height:  10px;">
+    <svg style="position: absolute;"
+         xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <line x1="5" y1="0" x2="5" y2="10"
+              style="stroke:rgb(255,255,0);stroke-width:1"/>
+
+    </svg>
+</div>
+
+
 
 </body>
 </html>

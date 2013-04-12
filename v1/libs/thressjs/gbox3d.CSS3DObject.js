@@ -55,6 +55,8 @@ THREE.CSS3DObject.prototype.updateMatrix = function() {
     element.style.transform = style;
     */
 
+    return this;
+
 }
 
 THREE.CSS3DObject.prototype.updateCSS = function() {
@@ -68,6 +70,18 @@ THREE.CSS3DObject.prototype.updateCSS = function() {
     element.style.oTransform = style;
     element.style.transform = style;
 
+    return this;
+
+}
+
+THREE.CSS3DObject.prototype.add = function(object) {
+
+    THREE.Object3D.prototype.add.call(this,object);
+
+    this.element.appendChild(object.element);
+
+
+    return this;
 }
 
 

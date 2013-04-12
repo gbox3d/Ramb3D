@@ -11,18 +11,48 @@
         }
     </style>
 
+
+    <script src='../libs/jquery-1.9.1.min.js'></script>
+
     <script src='../libs/thressjs/three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
     <script src='../libs/thressjs/CSS3DRenderer.js'></script>
-    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
+
+
 
     <script>
+
+
+        //nodejs 이용해서 로그 출력하기
+        function RogLog(logtext) {
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'text',
+                url: 'http://192.168.0.7:8080/log',
+                data: {text: logtext},
+                success: function(data, textStatus, jqXHR) {
+
+
+                },
+                complete: function(jqXHR, textStatus) {
+
+
+                },
+                error: function(qXHR, textStatus, errorThrown) {
+
+                }
+            });
+
+
+        }
 
         window.onload = function() {
 
             var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
@@ -34,32 +64,16 @@
             camera.position.set(0,100,500);
             camera.lookAt( new THREE.Vector3(0,0,0) );
 
-            var scene = new THREE.CSS3DScene({
-                camera:camera
-
-            });
+            var scene = new THREE.Scene();
 
             var element = document.querySelector('#cube');
             var object = new THREE.CSS3DObject( element );
             object.position.set(0,0,0);
             scene.add( object );
 
-            var i,j;
-
-            for(j=-5;j<5;j++) {
-
-                for(i=-5;i<5;i++) {
-
-                    object = object.clone();
-                    object.position.set(i*128,-128,j*128);
-                    scene.add( object );
-
-                }
-
-            }
-
             //초기 랜더링
             renderer.render( scene, camera );
+
 
 
             function fpsCamera(movementX,movementY,movementZ) {
@@ -70,6 +84,7 @@
                 camera.rotation.y += movementX * 0.1;
 
                 camera.update(window.innerWidth,window.innerHeight);
+                //renderer.domElement.backgroundColor="#00FF00";
 
             }
 
@@ -134,19 +149,11 @@
 
                 moveFront(event.wheelDeltaY)
 
-//                var camMat = [];
-//                camera.matrix.flattenToArray(camMat);
-//
-//                //전방벡터 구하기
-//                var vFront =  new THREE.Vector3(camMat[8],camMat[9],camMat[10]);
-//                vFront.normalize();
-//                vFront.multiplyScalar(event.wheelDeltaY );
-//                camera.position = camera.position.add(vFront);
-//                camera.update(window.innerWidth, window.innerHeight);
             }
 
             //터치 디바이스
             var touchX,  touchY;
+            var touchZ;
 
             function onDocumentTouchStart( event ) {
 
@@ -156,6 +163,12 @@
 
                 touchX = touch.screenX;
                 touchY = touch.screenY;
+
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+                    touchZ = touch2.screenY;
+                    //RogLog('touch2 start ' + touchZ);
+                }
 
             }
 
@@ -172,6 +185,18 @@
 
                 fpsCamera(movementX*0.01,movementY*0.01,0);
 
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+
+                    var movementZ =  (touchZ - touch2.screenY);
+                    touchZ = touch2.screenY;
+
+                    //RogLog('touch2 move ' + movementZ);
+
+                    moveFront(movementZ);
+
+                }
+
 
 
             }
@@ -181,7 +206,7 @@
     </script>
 
 </head>
-<body>
+<body style="margin: 0px;">
 
 <div id='cube' class="css3dobj">
 
