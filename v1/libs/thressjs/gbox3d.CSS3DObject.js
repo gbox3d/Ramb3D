@@ -7,16 +7,54 @@
  */
 
 
-THREE.CSS3DObject = function ( element ) {
+THREE.CSS3DObject = function ( param ) {
 
     THREE.Object3D.call( this );
 
-    this.element = element;
-    this.element.style.position = "absolute";
-    this.element.style.WebkitTransformStyle = 'preserve-3d';
-    this.element.style.MozTransformStyle = 'preserve-3d';
-    this.element.style.oTransformStyle = 'preserve-3d';
-    this.element.style.transformStyle = 'preserve-3d';
+
+
+    if(param.element != undefined) {
+
+        this.initElement(param.element);
+
+    }
+    else if(param.url != undefined) {
+
+        var that = this;
+
+        (function (file_name, id, complete) {
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'html',
+                url: file_name,
+                success: function(data, textStatus, jqXHR) {
+
+                    that.initElement($(data)[0]);
+
+                },
+                complete: function(jqXHR, textStatus) {
+                    //console.log('complete');
+                    if (complete != undefined) {
+                        complete(textStatus, that);
+                    }
+
+                },
+                error: function(qXHR, textStatus, errorThrown) {
+                    console.log('error');
+
+                }
+            });
+
+        })(param.url,param.id,param.complete);
+
+    }
+    else {
+
+        this.initElement(param)
+    }
+
+
 };
 
 THREE.CSS3DObject.prototype = Object.create( THREE.Object3D.prototype );
@@ -83,6 +121,16 @@ THREE.CSS3DObject.prototype.add = function(object) {
 
     return this;
 }
+
+THREE.CSS3DObject.prototype.initElement = function(element) {
+    this.element = element;
+    this.element.style.position = "absolute";
+    this.element.style.WebkitTransformStyle = 'preserve-3d';
+    this.element.style.MozTransformStyle = 'preserve-3d';
+    this.element.style.oTransformStyle = 'preserve-3d';
+    this.element.style.transformStyle = 'preserve-3d';
+}
+
 
 
 

@@ -23,6 +23,8 @@ THREE.CSS3DScene = function (param) {
     this.rootObject = new THREE.CSS3DObject(element);
 
     this.rootObject.position.set(0,0,0);
+    //최고 루트는 씬객체
+    this.rootObject.parent = this;
 
     if(param.camera == undefined) {
 
@@ -36,10 +38,7 @@ THREE.CSS3DScene.prototype = Object.create( THREE.Scene.prototype );
 
 THREE.CSS3DScene.prototype.add = function(object) {
 
-    //object.updateCSS();
-
     this.rootObject.add(object);
-    //object.updateCSS();
 
 }
 
@@ -55,4 +54,8 @@ THREE.CSS3DScene.prototype.updateAllObject= function() {
         this.__objects[index].updateMatrix();
     }
 
+}
+
+THREE.CSS3DScene.prototype.updateMatrixWorld = function(force) {
+    this.rootObject.updateMatrixWorld(force);
 }

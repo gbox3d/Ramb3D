@@ -7,12 +7,13 @@
  */
 
 
-THREE.CSS3DPerspectiveCamera = function ( fov, aspect, near, far, element ) {
+THREE.CSS3DPerspectiveCamera = function ( param /*fov, aspect, near, far, element*/ ) {
 
-    THREE.PerspectiveCamera.call( this,fov, aspect, near, far );
+    THREE.PerspectiveCamera.call( this,param.fov, param.aspect, param.near, param.far );
 
-    this.element = element;
-    console.log('CSS3DPerspectiveCamera v1.0');
+    this.element = param.element;
+
+    console.log('CSS3DPerspectiveCamera v1.01');
 
 };
 

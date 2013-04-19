@@ -3,19 +3,14 @@
 <head>
     <title>fps 카메라 형식 오브잭트 회전 </title>
 
-    <style>
-        .css3dobj {
-            position: absolute;
-            -webkit-transform-style: preserve-3d;
-            -webkit-backface-visibility : hidden;
-        }
-    </style>
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
 
     <script src='../libs/thressjs/three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
     <script src='../libs/thressjs/CSS3DRenderer.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
 
     <script>
 
@@ -27,13 +22,20 @@
 
 
             var camera = new THREE.CSS3DPerspectiveCamera(
-                    90,window.innerWidth / window.innerHeight, 1, 1000,
-                    renderer.cameraElement
+                    {
+                        fov : 90,
+                        aspect : window.innerWidth / window.innerHeight,
+                        near : 1,
+                        far : 1000,
+                        element : renderer.cameraElement
+                    }
             );
             camera.position.set(0,0,500);
             camera.lookAt( new THREE.Vector3(0,0,0) );
 
-            var scene = new THREE.Scene();
+            var scene = new THREE.CSS3DScene({
+                camera:camera
+            });
 
             var element = document.querySelector('#cube');
             var object = new THREE.CSS3DObject( element );
@@ -91,15 +93,6 @@
                 object.translateZ(event.wheelDeltaY);
                 object.updateMatrix();
 
-//                var camMat = [];
-//                camera.matrix.flattenToArray(camMat);
-//
-//                //전방벡터 구하기
-//                var vFront =  new THREE.Vector3(camMat[8],camMat[9],camMat[10]);
-//                vFront.normalize();
-//                vFront.multiplyScalar(event.wheelDeltaY );
-//                camera.position = camera.position.add(vFront);
-//                camera.update(window.innerWidth, window.innerHeight);
             }
 
 
@@ -127,6 +120,7 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,64px);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,64px);
             ">
 
     </div>
@@ -139,6 +133,7 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(64px,0px,0px) rotateY(90deg);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(64px,0px,0px) rotateY(90deg);
             ">
 
     </div>
@@ -151,6 +146,7 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(-64px,0px,0px) rotateY(-90deg);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(-64px,0px,0px) rotateY(-90deg);
             ">
 
     </div>
@@ -163,6 +159,7 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,-64px) rotateY(180deg);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,-64px) rotateY(180deg);
             ">
 
     </div>
@@ -175,6 +172,7 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,-64px,0px) rotateX(90deg);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(0px,-64px,0px) rotateX(90deg);
             ">
 
     </div>
@@ -187,12 +185,14 @@
                 height: 128px;
 
                 -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,64px,0px) rotateX(-90deg);
+                -moz-transform : translate3d(-50%,-50%,0) translate3d(0px,64px,0px) rotateX(-90deg);
             ">
 
     </div>
 
 
 </div>
+
 
 
 </body>

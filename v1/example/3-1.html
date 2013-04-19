@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>fps 카메라 제어 예제</title>
 
-    <style>
-        .css3dobj {
-            position: absolute;
-            -webkit-transform-style: preserve-3d;
-            -webkit-backface-visibility : hidden;
-        }
-    </style>
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
 
     <script src='../libs/thressjs/three.js'></script>
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
@@ -23,21 +17,29 @@
         window.onload = function() {
 
             var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
 
             var camera = new THREE.CSS3DPerspectiveCamera(
-                    90,window.innerWidth / window.innerHeight, 1, 1000,
-                    renderer.cameraElement
+                    {
+                        fov : 90,
+                        aspect : window.innerWidth / window.innerHeight,
+                        near : 1,
+                        far : 1000,
+                        element : renderer.cameraElement
+                    }
             );
-            camera.position.set(0,100,500);
+            camera.position.set(0,0,500);
             camera.lookAt( new THREE.Vector3(0,0,0) );
+
 
             var scene = new THREE.CSS3DScene({
                 camera:camera
 
             });
+
 
             var element = document.querySelector('#cube');
             var object = new THREE.CSS3DObject( element );
@@ -51,7 +53,7 @@
                 for(i=-5;i<5;i++) {
 
                     object = object.clone();
-                    object.position.set(i*128,-128,j*128);
+                    object.position.set(i*128,128,j*128);
                     scene.add( object );
 
                 }
@@ -129,20 +131,10 @@
 
             function onDocumentMouseWheel( event ) {
 
-
                 event.preventDefault();
 
-                moveFront(event.wheelDeltaY)
+                moveFront(event.wheelDeltaY);
 
-//                var camMat = [];
-//                camera.matrix.flattenToArray(camMat);
-//
-//                //전방벡터 구하기
-//                var vFront =  new THREE.Vector3(camMat[8],camMat[9],camMat[10]);
-//                vFront.normalize();
-//                vFront.multiplyScalar(event.wheelDeltaY );
-//                camera.position = camera.position.add(vFront);
-//                camera.update(window.innerWidth, window.innerHeight);
             }
 
             //터치 디바이스

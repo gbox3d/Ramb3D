@@ -62,3 +62,28 @@ THREE.Matrix4.prototype.toCameraCSSMatrix = function ( ) {
         ')';
 
 }
+
+///////벡터 확장
+//    (0,0,1) 기준으로 x,y 축의 회전 각도를 구한다.
+
+THREE.Vector3.prototype.getHorizontalAngle = function() {
+    var b = new  THREE.Vector3();
+
+    b.y =  THREE.Math.radToDeg(Math.atan2(this.x, this.z));
+
+    if (b.y < 0) {
+        b.y += 360
+    }
+    if (b.y >= 360) {
+        b.y -= 360
+    }
+    var a = Math.sqrt(this.x * this.x + this.z * this.z);
+    b.x = THREE.Math.radToDeg(Math.atan2(a, this.y)) - 90;
+    if (b.x < 0) {
+        b.x += 360
+    }
+    if (b.x >= 360) {
+        b.x -= 360
+    }
+    return b;
+};
