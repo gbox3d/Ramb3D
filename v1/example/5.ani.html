@@ -53,7 +53,13 @@
             (function gameloop() {
                 //재호출을 위한 부분...
                 requestAnimationFrame(gameloop);
+
+
                 renderer.render( scene, camera );
+
+                object.rotation.x += 0.01;
+                object.rotation.y += 0.01;
+
 
             })();
 
@@ -125,7 +131,9 @@
 </head>
 <body>
 
-<div id='cube' class="css3dobj">
+<div id='cube' class="css3dobj"
+
+        >
 
     <div
             class="css3dobj"

@@ -1,9 +1,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>scene object loader </title>
+
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
+
+
+    <script src='../libs/jquery-1.9.1.min.js'></script>
+
+    <script src='../libs/thressjs/three.js'></script>
+
+    <!--쓰리제이에스 확장-->
+    <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
+    <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
+    <script src='../libs/thressjs/CSS3DRenderer.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
+
+    <script>
+        $(function() {
+
+            var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var camera = new THREE.CSS3DPerspectiveCamera(
+                    {
+                        fov : 90,
+                        aspect : window.innerWidth / window.innerHeight,
+                        near : 1,
+                        far : 1000,
+                        element : renderer.cameraElement
+                    }
+            );
+            camera.position.set(300,300,500);
+            camera.lookAt( new THREE.Vector3(0,0,0) );
+
+
+            var scene = new THREE.CSS3DScene({
+                camera:camera
+
+            });
+
+            var object = new THREE.CSS3DObject(
+                    {
+                        url : '../scene/plane.html',
+                        complete : function(resultText,obj) {
+                            obj.position.set(0,0,0);
+                            scene.add(obj);
+
+                            loadFinish();
+                        }
+                    }
+            );
+
+            var grid_obj = new THREE.CSS3DObject(
+                    {
+                        url : '../scene/grid.html',
+                        complete : function(resultText,obj) {
+                            obj.position.set(0,0,0);
+                            scene.add(obj);
+
+                            loadFinish();
+
+                        }
+                    }
+            );
+
+            //로딩 프로그래싱 관련
+            var load_progress = 0;
+
+            function loadFinish() {
+                load_progress++;
+                if(load_progress == 2) {
+                    console.log('load finished all');
+                    renderer.render( scene, camera );
+                }
+            }
+            ///////////////////////
+
+
+
+            //이벤트처리
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            function onWindowResize() {
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.render( scene, camera );
+
+            }
+
+            function onDocumentMouseDown( event ) {
+
+                event.preventDefault();
+
+                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+            }
+
+            function onDocumentMouseMove( event ) {
+
+                var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+                var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+                object.rotation.y += movementX * 0.01;
+                object.rotation.x -= movementY * 0.01;
+
+                //매트릭스 css3 적용
+                object.updateMatrix();
+
+            }
+
+            function onDocumentMouseUp( event ) {
+
+                document.removeEventListener( 'mousemove', onDocumentMouseMove );
+                document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+            }
+
+        });
+
+
+    </script>
+
 </head>
-<body>
+
+<body style="margin: 0px;">
 
 </body>
 </html>
