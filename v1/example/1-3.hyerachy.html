@@ -55,9 +55,15 @@
 
             //cloning object
             var clone_object = object.clone();
-            clone_object.position.set(128,0,0);
+            clone_object.position.set(128,128,0);
             clone_object.updateMatrix();
             object.add(clone_object);
+
+//            object =  clone_object;
+//            clone_object = clone_object.clone();
+//            clone_object.position.set(0,128,0);
+//            clone_object.updateMatrix();
+//            object.add(clone_object);
 
 
             var grid_object = new THREE.CSS3DObject( document.querySelector('#grid') );

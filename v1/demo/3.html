@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps 카메라 제어 예제</title>
+
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
+
+    <style>
+
+        .anim-wingL-fly {
+            -webkit-animation-name: leftwingani;
+            -webkit-animation-duration: 1s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease;
+        }
+
+        .anim-wingR-fly {
+            -webkit-animation-name: rightwingani;
+            -webkit-animation-duration: 1s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease;
+        }
+
+        @-webkit-keyframes leftwingani {
+            from {
+                -webkit-transform:rotateY(-45deg);
+            }
+            50% {
+                -webkit-transform:rotateY(45deg);
+            }
+            to{
+                -webkit-transform:rotateY(-45deg);
+            }
+        }
+
+        @-webkit-keyframes rightwingani {
+            from {
+                -webkit-transform:rotateY(45deg);
+            }
+            50% {
+                -webkit-transform:rotateY(-45deg);
+            }
+            to{
+                -webkit-transform:rotateY(45deg);
+            }
+        }
+
+    </style>
+
+    <script src='../libs/jquery-1.9.1.min.js'></script>
+
+    <script src='../libs/thressjs/three.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
+    <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/CSS3DRenderer.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
+
+    <script>
+
+    function animation(obj) {
+
+        var el = obj.element;
+
+        return function(x,y,z)  {
+
+            //코루틴 역활
+            setTimeout(function() {
+
+                $(el).css('-webkit-transition','-webkit-transform '+ 0.3  +'s');
+                obj.position.set(x,y,z);
+                obj.updateMatrix();
+
+                $(el).on('webkitTransitionEnd',function() {
+
+
+                    var time = (Math.random() * 5) + 5.0;
+                    var x = Math.random() * 1200 - 600;
+                    var y = 0- (Math.random() * 1200);
+                    var z = Math.random() * 1200 - 600;
+                    var rot = Math.random() * 360;
+
+                    obj.position.set(x,y,z);
+                    obj.rotation.y = rot;
+                    obj.updateMatrix();
+
+                    $(el).css('-webkit-transition','-webkit-transform '+ time  +'s');
+
+                });
+
+            },0);
+
+        }
+    }
+
+        window.onload = function() {
+
+            var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+
+            var camera = new THREE.CSS3DPerspectiveCamera(
+                    {
+                        fov : 90,
+                        aspect : window.innerWidth / window.innerHeight,
+                        near : 1,
+                        far : 1000,
+                        element : renderer.cameraElement
+                    }
+            );
+            camera.position.set(0,64,500);
+            camera.lookAt( new THREE.Vector3(0,0,0) );
+
+
+            var scene = new THREE.CSS3DScene({
+                camera:camera
+
+            });
+
+
+            var element = document.querySelector('#cube-grass');
+            var object = new THREE.CSS3DObject( element );
+            object.position.set(0,-64,0);
+            scene.add( object );
+
+            object = object.clone();
+            object.position.x = 128*2;
+            object.position.z = 128*2;
+            scene.add( object );
+
+
+
+
+            element = document.querySelector('#plane-grass');
+            object = new THREE.CSS3DObject( element );
+            object.position.set(0,0,0);
+            object.rotation.x = THREE.Math.degToRad(90);
+            scene.add( object );
+
+            var i,j;
+
+            for(j=-5;j<5;j++) {
+
+                for(i=-5;i<5;i++) {
+
+                    object = object.clone();
+                    object.position.set(i*128,0,j*128);
+                    scene.add( object );
+
+                }
+
+            }
+
+            //나비 만들기
+            object = new THREE.CSS3DObject( document.querySelector('#red-butter') );
+            //object.position.set(0,-128,0);
+            //object.scale.set(0.2,0.2);
+            scene.add(object);
+            animation(object)(0,-128,0);
+
+            //초기 랜더링
+            renderer.render( scene, camera );
+
+
+            function fpsCamera(movementX,movementY,movementZ) {
+
+                camera.eulerOrder = 'YXZ'
+
+                camera.rotation.x += movementY * 0.1;
+                camera.rotation.y += movementX * 0.1;
+
+                camera.update(window.innerWidth,window.innerHeight);
+
+            }
+
+            function moveFront(delta) {
+                event.preventDefault();
+                camera.translateZ(delta);
+                camera.position.y = 64;
+
+                camera.update(window.innerWidth,window.innerHeight);
+            }
+
+            //이벤트처리
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+            document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+
+            document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+            document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            function onWindowResize() {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+                camera.update(window.innerWidth, window.innerHeight);
+
+            }
+
+            function onDocumentMouseDown( event ) {
+
+                event.preventDefault();
+
+                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+            }
+
+            function onDocumentMouseMove( event ) {
+
+                var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+                var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+                fpsCamera(movementX*0.01,movementY*0.01,0);
+
+
+            }
+
+            function onDocumentMouseUp( event ) {
+
+                document.removeEventListener( 'mousemove', onDocumentMouseMove );
+                document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+            }
+
+            function onDocumentMouseWheel( event ) {
+
+                event.preventDefault();
+
+                moveFront(event.wheelDeltaY);
+
+            }
+
+            //터치 디바이스
+            var touchX,  touchY;
+            var touchZ;
+
+            function onDocumentTouchStart( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+                    touchZ = touch2.screenY;
+                    //RogLog('touch2 start ' + touchZ);
+                }
+
+            }
+
+            function onDocumentTouchMove( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                var movementX =  (touchX - touch.screenX);
+                var movementY =  (touchY - touch.screenY);
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+                fpsCamera(movementX*0.01,movementY*0.01,0);
+
+                if(event.touches[1] != undefined) {
+                    var touch2 = event.touches[ 1 ];
+
+                    var movementZ =  (touchZ - touch2.screenY);
+                    touchZ = touch2.screenY;
+
+                    //RogLog('touch2 move ' + movementZ);
+
+                    moveFront(movementZ);
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+</head>
+<body>
+
+<div id='cube-grass' class="css3dobj">
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/grass_dirt.png);
+                width: 128px;
+                height: 128px;
+                background-size: 100%;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,64px);
+            ">
+
+    </div>
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/grass_dirt.png);
+                width: 128px;
+                height: 128px;
+                background-size: 100%;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(64px,0px,0px) rotateY(90deg);
+            ">
+
+    </div>
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/grass_dirt.png);
+                width: 128px;
+                height: 128px;
+                background-size: 100%;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(-64px,0px,0px) rotateY(-90deg);
+            ">
+
+    </div>
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/grass_dirt.png);
+                width: 128px;
+                height: 128px;
+                background-size: 100%;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,-64px) rotateY(180deg);
+            ">
+
+    </div>
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/grass.png);
+                width: 128px;
+                height: 128px;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,-64px,0px) rotateX(90deg);
+            ">
+
+    </div>
+
+    <div
+            class="css3dobj"
+            style="
+                background-image: url(../res/minecraft/dirt.png);
+                width: 128px;
+                height: 128px;
+
+                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,64px,0px) rotateX(-90deg);
+            ">
+
+    </div>
+
+
+</div>
+
+<div id='plane-grass'>
+    <div
+            class="css3dobj css3d-geometry"
+            style="
+                background-image: url(../res/minecraft/grass.png);
+                background-size: 100%;
+                width: 128px;
+                height: 128px;
+            ">
+
+    </div>
+
+</div>
+
+<div id='red-butter' >
+    <div style="
+    -webkit-transform : rotateX(90deg);
+    -webkit-transform-style : inherit;
+    ">
+        <div class="anim-wingL-fly">
+            <div
+                    class="css3dobj css3d-geometry"
+                    style="
+                background-image: url(../res/wing.png);
+                background-size: 100%;
+                width: 178px;
+                height: 208px;
+                -webkit-backface-visibility : visible;
+                -webkit-transform : translate3d(-100%,-50%,0)
+            ">
+
+            </div>
+        </div>
+
+        <div class="anim-wingR-fly">
+            <div
+                    class="css3dobj css3d-geometry"
+                    style="
+                background-image: url(../res/wing.png);
+                background-size: 100%;
+                width: 178px;
+                height: 208px;
+                -webkit-backface-visibility : visible;
+                -webkit-transform : translate3d(0%,-50%,0) rotateY(180deg);
+            ">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

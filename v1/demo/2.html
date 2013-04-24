@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>basic</title>
+
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
+
+    <style>
+
+        .anim-wingL-fly {
+            -webkit-animation-name: leftwingani;
+            -webkit-animation-duration: 1s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease;
+        }
+
+        .anim-wingR-fly {
+            -webkit-animation-name: rightwingani;
+            -webkit-animation-duration: 1s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: ease;
+        }
+
+        @-webkit-keyframes leftwingani {
+            from {
+                -webkit-transform:rotateY(-45deg);
+            }
+            50% {
+                -webkit-transform:rotateY(45deg);
+            }
+            to{
+                -webkit-transform:rotateY(-45deg);
+            }
+        }
+
+        @-webkit-keyframes rightwingani {
+            from {
+                -webkit-transform:rotateY(45deg);
+            }
+            50% {
+                -webkit-transform:rotateY(-45deg);
+            }
+            to{
+                -webkit-transform:rotateY(45deg);
+            }
+        }
+
+    </style>
+
+
+    <script src='../libs/jquery-1.9.1.min.js'></script>
+
+    <script src='../libs/thressjs/three.js'></script>
+
+    <!--쓰리제이에스 확장-->
+    <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
+    <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
+    <script src='../libs/thressjs/CSS3DRenderer.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DPerspCamera.js'></script>
+    <script src='../libs/thressjs/gbox3d.CSS3DScene.js'></script>
+
+    <script>
+
+        function animation(obj) {
+
+            var el = obj.element;
+
+            return function()  {
+
+                //코루틴 역활
+                setTimeout(function() {
+
+                    $(el).css('-webkit-transition','-webkit-transform '+ 0.3  +'s');
+                    obj.position.set(10,10,10);
+                    obj.updateMatrix();
+
+                    $(el).on('webkitTransitionEnd',function() {
+
+
+                        var time = (Math.random() * 5) + 1.0;
+                        var x = Math.random() * 1200 - 600;
+                        var y = Math.random() * 1200;
+                        var z = Math.random() * 1200 - 600;
+                        var rot = Math.random() * 360;
+
+                        obj.position.set(x,y,z);
+                        obj.rotation.y = rot;
+                        obj.updateMatrix();
+
+                        $(el).css('-webkit-transition','-webkit-transform '+ time  +'s');
+
+                    });
+
+                },0);
+
+            }
+        }
+
+        $(function() {
+
+            var renderer = new THREE.CSS3DRenderer();
+            renderer.domElement.style.backgroundColor="#9966FF";   //배경컬러지정
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var camera = new THREE.CSS3DPerspectiveCamera(
+                    {
+                        fov : 90,
+                        aspect : window.innerWidth / window.innerHeight,
+                        near : 1,
+                        far : 1000,
+                        element : renderer.cameraElement
+                    }
+            );
+            camera.position.set(300,300,500);
+            camera.lookAt( new THREE.Vector3(0,0,0) );
+
+
+            var scene = new THREE.CSS3DScene({
+                camera:camera
+
+            });
+
+            var rootObj = new THREE.CSS3DObject( document.querySelector('#root-obj') );
+            rootObj.position.set(0,0,0);
+            scene.add(rootObj);
+
+            var grid_object = new THREE.CSS3DObject( document.querySelector('#grid') );
+            grid_object.position.set(0,0,0);
+
+            rootObj.add(grid_object);
+
+            var object = new THREE.CSS3DObject( document.querySelector('#red-butter') );
+            object.position.set(0,0,0);
+            rootObj.add(object);
+            animation(object)();
+
+            var count = 0;
+            var hid = setInterval(function() {
+
+                var clone_object = object.clone();
+                clone_object.position.set(128,0,0);
+                clone_object.updateMatrix();
+                rootObj.add(clone_object);
+                animation(clone_object)();
+
+                count++;
+                if(count > 64) {
+                    clearInterval(hid);
+                }
+            },300);
+
+            renderer.render( scene, camera );
+
+
+            function callbackControl(movementX,movementY) {
+                rootObj.rotation.y += movementX * 0.01;
+                rootObj.rotation.x -= movementY * 0.01;
+
+                //매트릭스 css3 적용
+                rootObj.updateMatrix();
+
+
+            }
+
+
+            //이벤트처리
+            document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            function onWindowResize() {
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.render( scene, camera );
+
+            }
+
+            function onDocumentMouseDown( event ) {
+
+                event.preventDefault();
+
+                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+                document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+            }
+
+            function onDocumentMouseMove( event ) {
+
+                var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+                var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+                callbackControl(movementX,movementY);
+
+
+
+            }
+
+            function onDocumentMouseUp( event ) {
+
+                document.removeEventListener( 'mousemove', onDocumentMouseMove );
+                document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+            }
+
+            //터치 디바이스
+            document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+            document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+            var touchX,  touchY;
+
+            function onDocumentTouchStart( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+            }
+
+            function onDocumentTouchMove( event ) {
+
+                event.preventDefault();
+
+                var touch = event.touches[ 0 ];
+
+                var movementX =  (touchX - touch.screenX);
+                var movementY =  (touchY - touch.screenY);
+                touchX = touch.screenX;
+                touchY = touch.screenY;
+
+                callbackControl(movementX,movementY);
+            }
+
+        });
+
+
+    </script>
+
+</head>
+<body style="margin: 0px;">
+
+<div id='root-obj' ></div>
+
+<div id='red-butter' >
+    <div style="
+    -webkit-transform : rotateX(90deg);
+    -webkit-transform-style : inherit;
+    ">
+        <div class="anim-wingL-fly">
+            <div
+                    class="css3dobj css3d-geometry"
+                    style="
+                background-image: url(../res/wing.png);
+                background-size: 100%;
+                width: 178px;
+                height: 208px;
+                -webkit-backface-visibility : visible;
+                -webkit-transform : translate3d(-100%,-50%,0)
+            ">
+
+            </div>
+        </div>
+
+        <div class="anim-wingR-fly">
+            <div
+                    class="css3dobj css3d-geometry"
+                    style="
+                background-image: url(../res/wing.png);
+                background-size: 100%;
+                width: 178px;
+                height: 208px;
+                -webkit-backface-visibility : visible;
+                -webkit-transform : translate3d(0%,-50%,0) rotateY(180deg);
+            ">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id='grid'
+
+     style="width: 200px; height:  200px;">
+
+    <svg
+            style="position: absolute;"
+            xmlns="http://www.w3.org/2000/svg" version="1.1"
+            >
+        <line x1="0" y1="0" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="0" x2="0" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="0" x2="200" y2="0"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="200" y1="0" x2="0" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="200" y1="0" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="200" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <line x1="100" y1="0" x2="100" y2="200"
+              style="stroke:rgb(255,255,0);stroke-width:1"/>
+
+    </svg>
+
+    <svg
+            xmlns="http://www.w3.org/2000/svg" version="1.1"
+            style="
+            position: absolute;
+            -webkit-transform:rotateX(90deg);"
+
+            >
+        <line x1="0" y1="0" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="0" x2="0" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="0" x2="200" y2="0"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="200" y1="0" x2="0" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="200" y1="0" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+        <line x1="0" y1="200" x2="200" y2="200"
+              style="stroke:rgb(255,0,0);stroke-width:1"/>
+
+        <line x1="100" y1="0" x2="100" y2="200"
+              style="stroke:rgb(255,255,0);stroke-width:1"/>
+
+    </svg>
+
+
+
+</div>
+
+</body>
+</html>
