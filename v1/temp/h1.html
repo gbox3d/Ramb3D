@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <meta charset="utf-8" />
 
-    <style>
-        .css3dobj {
-            position: absolute;
-            -webkit-transform-style: preserve-3d;
-            -webkit-backface-visibility : hidden;
-        }
-    </style>
+    <title>basic</title>
+
+    <link rel="stylesheet" href="../libs/css/gbox3d.three.css"/>
+
 
     <script src='../libs/jquery-1.9.1.min.js'></script>
 
     <script src='../libs/thressjs/three.js'></script>
+
+    <!--쓰리제이에스 확장-->
     <script src='../libs/thressjs/gbox3d.CSS3DObject.js'></script>
     <script src='../libs/thressjs/gbox3d.ext.three.js'></script>
     <script src='../libs/thressjs/CSS3DRenderer.js'></script>
@@ -44,32 +43,20 @@
 
             var scene = new THREE.CSS3DScene({
                 camera:camera
-
             });
 
+//            var rootObj = new THREE.CSS3DObject( document.querySelector('#root-obj') );
+//            rootObj.position.set(0,0,0);
+//            scene.add(rootObj);
+
             var object = new THREE.CSS3DObject( document.querySelector('#plane') );
-            object.position.set(0,0,0);
-            object.updateMatrix();
+            object.position.set(0,100,0);
             scene.add(object);
-
-
-            //cloning object
-            var clone_object = object.clone();
-            clone_object.position.set(128,128,0);
-            clone_object.updateMatrix();
-            object.add(clone_object);
-
-            object =  clone_object;
-            clone_object = clone_object.clone();
-            clone_object.position.set(0,128,0);
-            clone_object.updateMatrix();
-            object.add(clone_object);
-
 
             var grid_object = new THREE.CSS3DObject( document.querySelector('#grid') );
             grid_object.position.set(0,0,0);
-            grid_object.updateMatrix();
             scene.add(grid_object);
+
 
             renderer.render( scene, camera );
 
@@ -102,7 +89,7 @@
                 object.rotation.y += movementX * 0.01;
                 object.rotation.x -= movementY * 0.01;
 
-                //매트릭스 & css3 갱신
+                //매트릭스 css3 적용
                 object.updateMatrix();
 
             }
@@ -122,20 +109,21 @@
 </head>
 <body style="margin: 0px;">
 
+<div id='root-obj'>
+
+</div>
 
 <div id='plane'>
     <div
-            class="css3dobj"
+            class="css3dobj css3d-geometry"
             style="
                 background-image: url(../res/crate.jpg);
                 background-size: 100%;
                 width: 128px;
                 height: 128px;
-                -webkit-transform : translate3d(-50%,-50%,0) translate3d(0px,0px,0px);
             ">
 
     </div>
-
 </div>
 
 

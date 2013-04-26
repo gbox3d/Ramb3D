@@ -22,10 +22,17 @@ THREE.Matrix4.prototype.toCSSMatrix = function () {
         THREE.Math.epsilon( elements[ 1 ] ) + ',' +
         THREE.Math.epsilon( elements[ 2 ] ) + ',' +
         THREE.Math.epsilon( elements[ 3 ] ) + ',' +
-        THREE.Math.epsilon( - elements[ 4 ] ) + ',' +
-        THREE.Math.epsilon( - elements[ 5 ] ) + ',' +
-        THREE.Math.epsilon( - elements[ 6 ] ) + ',' +
-        THREE.Math.epsilon( - elements[ 7 ] ) + ',' +
+
+//        THREE.Math.epsilon( - elements[ 4 ] ) + ',' +
+//        THREE.Math.epsilon( - elements[ 5 ] ) + ',' +
+//        THREE.Math.epsilon( - elements[ 6 ] ) + ',' +
+//        THREE.Math.epsilon( - elements[ 7 ] ) + ',' +
+
+        THREE.Math.epsilon(  elements[ 4 ] ) + ',' +
+        THREE.Math.epsilon(  elements[ 5 ] ) + ',' +
+        THREE.Math.epsilon(  elements[ 6 ] ) + ',' +
+        THREE.Math.epsilon(  elements[ 7 ] ) + ',' +
+
         THREE.Math.epsilon( elements[ 8 ] ) + ',' +
         THREE.Math.epsilon( elements[ 9 ] ) + ',' +
         THREE.Math.epsilon( elements[ 10 ] ) + ',' +

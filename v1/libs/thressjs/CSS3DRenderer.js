@@ -99,6 +99,7 @@ THREE.CSS3DRenderer = function (domElement,cameraElement,bkgColor) {
 
         };
 
+    /*
 	var getCameraCSSMatrix = function ( matrix ) {
 
 		var elements = matrix.elements;
@@ -133,10 +134,12 @@ THREE.CSS3DRenderer = function (domElement,cameraElement,bkgColor) {
 			epsilon( elements[ 1 ] ) + ',' +
 			epsilon( elements[ 2 ] ) + ',' +
 			epsilon( elements[ 3 ] ) + ',' +
-			epsilon( - elements[ 4 ] ) + ',' +
+
+            epsilon( - elements[ 4 ] ) + ',' +
 			epsilon( - elements[ 5 ] ) + ',' +
 			epsilon( - elements[ 6 ] ) + ',' +
 			epsilon( - elements[ 7 ] ) + ',' +
+
 			epsilon( elements[ 8 ] ) + ',' +
 			epsilon( elements[ 9 ] ) + ',' +
 			epsilon( elements[ 10 ] ) + ',' +
@@ -148,10 +151,7 @@ THREE.CSS3DRenderer = function (domElement,cameraElement,bkgColor) {
 		')';
 
 	}
-
-
-    /*
-    this.updateCamera = function( scene,camera) {
+	this.updateCamera = function( scene,camera) {
 
         var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.fov * 0.5 ) ) * _height;
 
