@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0, user-scalable=no">
+
+    <title>tiny sample</title>
+
+    <script src='../../libs/jquery-2.0.3.min.js'></script>
+
+    <script src='../../libs/threejs/three.js'></script>
+    <script src='../../libs/threejs/CSS3DRenderer.js'></script>
+
+    <script src="../../libs/ramb3d/core.js"></script>
+
+    <style>
+
+        /*
+        div {
+            color : #000000;
+            color : #6B0108;
+            color : #ff0000;
+            color : #fdc71f;
+            color : #ffff00;
+            color : #0e9000;
+            color : #0000fe;
+            color : #8a008d;
+            color : #898c89;
+            color : #fbfdfb;
+            color : #ffff00;
+        }
+        */
+    </style>
+
+</head>
+
+<body style="margin: 0px;">
+
+
+
+<script>
+
+    //씬메니져 얻어오기
+    var Smgr = new ramb3d.scene.SceneManager({
+        camera : {
+            fov : 45,
+            far : 5000,
+            near : 1,
+            position : new THREE.Vector3(0, 0, 500),
+            lookat : new THREE.Vector3()
+        }
+    });
+
+    function makeSlot(option) {
+
+        var slot_dummy = ramb3d.util.createDummy();
+        var angle_div = (360)/colors.length;
+        //씬노드 추가
+        for(var i=0;i<colors.length; i++) {
+
+            var object = ramb3d.util.createPlane({
+                name : 'plane-red',
+                width : 64,
+                height : 32,
+                color : colors[i],
+                parent : slot_dummy
+            });
+
+            var rotM = (new THREE.Matrix4()).makeRotationFromEuler(
+                    new THREE.Euler(THREE.Math.degToRad(i*angle_div),0,0,"XYZ"));
+
+            var trnM = (new THREE.Matrix4()).makeTranslation(0,0,option.radius);
+
+            var resultM = (new THREE.Matrix4()).multiplyMatrices(rotM,trnM);
+
+            object.applyMatrix(resultM);
+
+        }
+        return slot_dummy;
+    }
+
+    var colors = [
+        '#000000',
+        '#6B0108',
+        '#ff0000',
+        '#fdc71f',
+        '#ffff00',
+        '#0e9000',
+        '#0000fe',
+        '#8a008d',
+        '#898c89',
+        '#ffffff'
+    ];
+
+    var slotObj = makeSlot({
+        colors:colors,
+        radius : 50
+    });
+
+
+    Smgr.scene.add(slotObj);
+
+    //트랙볼 카메라 컨트롤러 생성
+    var tbcc = Smgr.addTBCameraController(
+            {
+                Smgr : Smgr,
+                center : new THREE.Vector3(0,0,0),
+                radius : 700
+            }
+    );
+
+    tbcc.setRotation(THREE.Math.degToRad(-25),0,0)
+            .apply();
+
+    //씬업데이트
+    Smgr.updateAll();
+
+</script>
+
+
+</body>
+</html>
