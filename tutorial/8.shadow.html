@@ -77,7 +77,7 @@
 
             //샤도우 라이트
             var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.35 );
-            directionalLight.position.set( 1, 1, 1 )
+            directionalLight.position.set( 2, 2, 2 )
             this.scene.add( directionalLight );
 
             directionalLight.castShadow = true;
@@ -115,7 +115,7 @@
 
             //트랜스폼 컨트롤러
             this.trn_control = new THREE.TransformControls( this.camera, this.renderer.domElement );
-            //this.trn_control.attach(directionalLight);
+            this.trn_control.attach(directionalLight);
             this.scene.add(this.trn_control);
 
 
