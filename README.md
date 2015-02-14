@@ -3,6 +3,9 @@ Ramb3d framework for three.js
 
 html5 web 3d framework
 
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/3r7O31YLBe8/0.jpg)](http://www.youtube.com/watch?v=3r7O31YLBe8)
+
+
 [project page](http://gbox3d.github.io/Ramb3D/)
 
 three.js이용해서 만든 웹3D 실시간 랜더러개발프레임웍입니다.
