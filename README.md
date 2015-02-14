@@ -1,4 +1,4 @@
-Ramb3d 프레임웍
+Ramb3d framework for three.js
 ========
 
 html5 web 3d framework
