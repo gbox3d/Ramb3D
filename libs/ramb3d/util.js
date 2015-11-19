@@ -22,20 +22,23 @@ ramb3d.util = {
     createDummy  : function(param) {
 
         if(param == undefined) {
+
             param = {};
             param.position = new THREE.Vector3();
         }
 
         var dummy;
         //더미 만들기
-        if(param.render_type == 'webgl') {
-            dummy = new THREE.Object3D();
-        }
-        else {
-
+        //if(param.render_type == 'webgl') {
+        //
+        //}
+        if(param.render_type == 'css3d') {
             dummy = new THREE.CSS3DObject(
                 document.createElement('div')
             );
+        }
+        else {
+            dummy = new THREE.Object3D();
         }
 
 
@@ -479,6 +482,16 @@ ramb3d.util = {
         worldPos.getPositionFromMatrix(obj3d.matrixWorld);
 
         return worldPos;
+    },
+    removeAllChildren : function(param) {
+
+        var node = param.node;
+
+        var obj, i;
+        for ( i = node.children.length - 1; i >= 0 ; i -- ) {
+            obj = node.children[ i ];
+            node.remove(obj);
+        }
     },
     /////////////////////////////////////////////////////////////////////
     //테스트용으로 정한 오브잭트를 돌려 보게 한다

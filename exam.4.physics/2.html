@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0, user-scalable=no">
+
+    <title> physics </title>
+
+    <script src="../libs/backbone/underscore.js"></script>
+    <script src='../libs/jquery-2.0.3.min.js'></script>
+
+
+    <script src='../libs/threejs/three.js'></script>
+    <script src='../libs/threejs/CSS3DRenderer.js'></script>
+    <script src="../libs/ramb3d/core.js"></script>
+
+    <script src="../libs/Oimo/Oimo.js"></script>
+
+    <script src="js/controls/OrbitControls.js"></script>
+
+</head>
+<body style="margin: 0px;" >
+
+<div >
+
+    <div id='mycanvas' style="
+    margin: auto;
+    width: 240px;height: 320px;border: 1px solid" ></div>
+
+    <div id="text-log" >
+        <div class="mouse-pos" ></div>
+    </div>
+
+
+</div>
+
+<script>
+
+    var container_window_element = document.querySelector('#mycanvas');
+
+    var Smgr = new ramb3d.scene.SceneManager({
+        camera : {
+            fov : 45,
+            far : 5000,
+            near : 1,
+            position : new THREE.Vector3(0, 10, 20),
+            lookat : new THREE.Vector3()
+
+        },
+        renderer : {
+            type : 'webgl',
+            container : document.querySelector('#mycanvas'),
+            clear : {
+                color : 0x000000,
+                alpha : 0.5 //배경색 투명도
+            }
+
+        },
+        window_size : { //창모드일경우 반드시 지정
+            width : container_window_element.offsetWidth,
+            height: container_window_element.offsetHeight
+        },
+        setup : function() {
+
+            var self = this;
+
+            //그리드헬퍼
+            var helper =  new THREE.GridHelper( 50, 1 );
+            helper.setColors(0x00ff00,0xff0000);
+            this.scene.add(helper);
+
+            //카메라의 현재 위치 기준으로 시작한다.
+            var controls = new THREE.OrbitControls( this.camera );
+            controls.target = new THREE.Vector3( 0, 0, 0 ); //바라보는 위치
+            controls.update();
+
+
+            //월드 추가
+            this.world = new OIMO.World(1/60, 2, 8);
+            this.world.gravity = new OIMO.Vec3(0, -0.5, 0);
+
+
+            //씬노드 추가
+            var geometry = new THREE.CubeGeometry(1,1,1);
+            var material = new THREE.MeshBasicMaterial(
+                    {
+                        color: 0x00ff00,
+                        wireframe : true
+
+                    }
+            );
+
+            this.box_node = [];
+            this.body = [];
+
+            this.addBox =  function() {
+                var node = new THREE.Mesh(geometry, material);
+                node.position.y = 5;
+                this.box_node.push(node);
+                this.scene.add(node);
+
+                this.body.push(new OIMO.Body({type:'box', size:[1,1,1], pos:[0,5,0], move:true, world:this.world})
+                );
+            }
+
+            //지면추가
+            var ground = new OIMO.Body({size:[10, 1, 10], pos:[0,0,0], world:this.world});
+
+            var mesh = new THREE.Mesh( geometry,material );
+            mesh.scale.set( 10,1,10 );
+            mesh.position.set(0,0,0);
+            mesh.rotation.set(0,0,0);
+            this.scene.add(mesh);
+
+        },
+        event : {
+            onWindowResize : function(evt) {
+
+                if(this.window_size) {
+
+                }
+                else { //전체 화면일경우
+                    this.updateAll({
+                        resize : {
+                            width :  window.innerWidth,
+                            height : window.innerHeight
+                        }
+                    });
+                }
+            },
+            onMouseDown : function(evt) {
+
+                console.log(evt);
+                this.addBox();
+
+            }/*,
+            onTouchStart : function(evt) {
+
+                console.log(evt);
+                this.addBox();
+
+            }*/,
+            onUpdatePhysics : function() {
+                this.world.step();
+
+                for(var i=0;i<this.body.length;i++) {
+                    this.box_node[i].position.copy(this.body[i].getPosition());
+                    this.box_node[i].quaternion.copy(this.body[i].getQuaternion());
+
+                }
+            },
+            onUpdate : function(event) {
+
+                /*
+                 event 인자
+                 deltaTick : 루프지연시간 (ms)
+                 */
+
+                //console.log(event);
+
+
+
+                this.updateAll();
+            }
+        }
+    });
+
+
+
+
+</script>
+
+</body>
+</html>

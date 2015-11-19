@@ -10,14 +10,12 @@
     <title> basic </title>
 
     <script src="../libs/backbone/underscore.js"></script>
-    <script src='../libs/jquery-2.0.3.min.js'></script>
-
+    <script src='../libs/extra/jquery-2.0.3.min.js'></script>
 
     <script src='../libs/threejs/three.js'></script>
-    <script src='../libs/threejs/CSS3DRenderer.js'></script>
-    <script src="../libs/ramb3d/core.js"></script>
-
     <script src="../libs/threejs/js/controls/OrbitControls.js"></script>
+
+    <script src="../libs/ramb3d/core.js"></script>
 
 </head>
 <body style="margin: 0px;" >
@@ -86,8 +84,6 @@
                     ]
             );
             mesh.position.set( 0,0,0 );
-            //mesh.rotation.set( 0, 45, 0 ); //오일러각도로 회전 시킨다.
-            //mesh.scale.set( s, s, s );
             this.scene.add( mesh );
 
 
@@ -99,18 +95,14 @@
 
             //각 정점 위치를 파티클점으로 표기한다.
             var pgeo = points.clone();
-            var particles = new THREE.PointCloud( pgeo, new THREE.PointCloudMaterial( { color: 0x0000ff, size: 1, opacity: 0.75 } ) );
-            //particles.position.set( x, y, z + 75 );
+            var particles = new THREE.Points( pgeo, new THREE.PointsMaterial( { color: 0x0000ff, size: 1, opacity: 0.75 } ) );
             particles.position.set( 0, 0, 1 );
-            //particles.rotation.set( rx, ry, rz );
-            //particles.scale.set( s, s, s );
             this.scene.add( particles );
-
 
             //오빗트형 카메라 컨트롤
             //카메라의 현재 위치 기준으로 시작한다.
-            var controls = new THREE.OrbitControls( this.camera );
-            controls.target = new THREE.Vector3( 0, 0, 0 ); //바라보는 위치
+            var controls = new THREE.OrbitControls( this.camera ,this.renderer.domElement);
+            controls.target.set(0,0,0);// = new THREE.Vector3( 0, 0, 0 ); //바라보는 위치
             controls.update();
 
             //그리드헬퍼

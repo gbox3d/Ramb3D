@@ -10,11 +10,11 @@
     <title> 창모드 basic </title>
 
     <script src="../libs/backbone/underscore.js"></script>
-    <script src='../libs/jquery-2.0.3.min.js'></script>
+    <script src='../libs/extra/jquery-2.0.3.min.js'></script>
 
 
     <script src='../libs/threejs/three.js'></script>
-    <script src='../libs/threejs/CSS3DRenderer.js'></script>
+    <!--<script src='../libs/threejs/CSS3DRenderer.js'></script>-->
     <script src="../libs/threejs/js/controls/OrbitControls.js"></script>
 
     <script src="../libs/ramb3d/core.js"></script>
@@ -69,7 +69,7 @@
 
             //오빗컨트롤
             //카메라의 현재 위치 기준으로 시작한다.
-            var controls = new THREE.OrbitControls( this.camera );
+            var controls = new THREE.OrbitControls( this.camera , this.renderer.domElement);
             controls.target = new THREE.Vector3( 0, 0, 0 ); //바라보는 위치
             controls.update();
 
@@ -87,12 +87,6 @@
             node.name = 'wire_cube';
 
             this.scene.add(node);
-
-            //카메라의 현재 위치 기준으로 시작한다.
-            var controls = new THREE.OrbitControls( this.camera );
-            controls.target = new THREE.Vector3( 0, 0, 0 ); //바라보는 위치
-            controls.update();
-
         },
         event : {
             onWindowResize : function(evt) {

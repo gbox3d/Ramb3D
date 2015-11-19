@@ -6,9 +6,15 @@
  * To change this template use File | Settings | File Templates.
  */
 
+/*
+
+r02
+-2015.10.19-
+util.createDummy 함수에서 기본 랜더러를 webgl로 수정
+ */
 
 ramb3d = {
-    REVISION : 'r01',
+    REVISION : 'r02',
     Renderer : {},
     scene : {}
 }
